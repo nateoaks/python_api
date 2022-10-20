@@ -1,5 +1,10 @@
 version: 0.2
 
+env:
+  secrets-manager:
+    DOCKERHUB_PASS: "/dockerhub/credentials:password"
+    DOCKERHUB_USERNAME: "/dockerhub/credentials:username"
+
 phases:
   pre_build:
     on-failure: ABORT
@@ -7,14 +12,15 @@ phases:
       - echo Logging in to Amazon ECR...
       - IMAGE_TAG=${COMMIT_HASH:=latest}
       - echo image_tag $IMAGE_TAG
-      - IMAGE_URI="nateoaks/pyapi:$IMAGE_TAG"
+      - IMAGE_URI="docker.io/nateoaks/pyapi:latest:$IMAGE_TAG"
       - echo Repository $IMAGE_URI
+      - docker login --username $DOCKERHUB_USERNAME --password $DOCKERHUB_PASS
       - docker pull $IMAGE_URI || true
   build:
     on-failure: ABORT
     commands:
       - echo Build started on `date`
-      - echo Building the Docker image...
+      - echo Building the Docker image... $IMAGE_URI
       - DOCKER_BUILDKIT=1 docker build --build-arg BUILDKIT_INLINE_CACHE=1 --tag $IMAGE_URI --cache-from $IMAGE_URI --target production .
   post_build:
     on-failure: ABORT
