@@ -29,4 +29,9 @@ phases:
       - echo Build stage successfully completed on `date`
       - echo Pushing the Docker image...
       - docker push $IMAGE_URI
+      - echo "test" > test.txt
       - echo Build completed on `date`
+
+artifacts:
+  files: 
+    - test.txt
