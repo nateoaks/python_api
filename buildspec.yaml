@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  pre_build:
+    on-failure: ABORT
+    commands:
+      - echo Logging in to Amazon ECR...
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - echo image_tag $IMAGE_TAG
+      - IMAGE_URI="nateoaks/pyapi:$IMAGE_TAG"
+      - echo Repository $IMAGE_URI
+      - docker pull $IMAGE_URI || true
+  build:
+    on-failure: ABORT
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - DOCKER_BUILDKIT=1 docker build --build-arg BUILDKIT_INLINE_CACHE=1 --tag $IMAGE_URI --cache-from $IMAGE_URI --target production .
+  post_build:
+    on-failure: ABORT
+    commands:
+      - bash -c "if [ /"$CODEBUILD_BUILD_SUCCEEDING/" == /"0/" ]; then exit 1; fi"
+      - echo Build stage successfully completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $IMAGE_URI
+      - echo Build completed on `date`
