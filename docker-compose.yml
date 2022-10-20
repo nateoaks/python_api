@@ -1,0 +1,10 @@
+services:
+  api:
+    build:
+      context: .
+      target: production
+    command: uvicorn python_api.main:app --host 0.0.0.0 --reload
+    ports:
+      - 8000:8000
+    volumes:
+      - ./python_api:/app/python_api
