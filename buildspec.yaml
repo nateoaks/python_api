@@ -9,10 +9,10 @@ phases:
   pre_build:
     on-failure: ABORT
     commands:
-      - echo Logging in to Amazon ECR...
+      - echo Logging in to Docker Hub...
       - IMAGE_TAG=${COMMIT_HASH:=latest}
       - echo image_tag $IMAGE_TAG
-      - IMAGE_URI="docker.io/nateoaks/pyapi:latest:$IMAGE_TAG"
+      - IMAGE_URI="docker.io/nateoaks/pyapi:$IMAGE_TAG"
       - echo Repository $IMAGE_URI
       - docker login --username $DOCKERHUB_USERNAME --password $DOCKERHUB_PASS
       - docker pull $IMAGE_URI || true
