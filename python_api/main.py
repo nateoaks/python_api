@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 
+from python_api import __version__
+
 app = FastAPI()
 
 
@@ -10,7 +12,7 @@ def read_root() -> dict[str, str]:
 
 @app.get("/version")
 def read_version() -> dict[str, str]:
-    return {"version": "1.0.0"}
+    return {"version": __version__}
 
 
 @app.get("/health")
